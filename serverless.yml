@@ -4,7 +4,7 @@ provider:
   name: aws
   runtime: python3.6
   stage: ${opt:stage, 'dev'}
-  region: us-east-1
+  region: eu-central-1
 
 package:
   exclude:
@@ -37,11 +37,11 @@ resources:
         Action: "lambda:InvokeFunction"
         SourceAccount:
           Ref: AWS::AccountId
-        SourceArn: "arn:aws:s3:::testing-lambda-fns-${opt:stage}"
+        SourceArn: "arn:aws:s3:::testing12578-lambda-fns-${opt:stage}"
     S3BucketTestingLambdaFns:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: testing-lambda-fns-${opt:stage}
+        BucketName: testing12578-lambda-fns-${opt:stage}
     S3IamPolicy:
       Type: AWS::IAM::Policy
       DependsOn: S3BucketTestingLambdaFns
@@ -53,7 +53,7 @@ resources:
             - Effect: Allow
               Action:
                 - s3:*
-              Resource: arn:aws:s3:::testing-lambda-fns-${opt:stage}/*
+              Resource: arn:aws:s3:::testing12578-lambda-fns-${opt:stage}/*
         Roles:
           - Ref: IamRoleLambdaExecution
     DynamoDbTable:

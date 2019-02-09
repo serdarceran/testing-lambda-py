@@ -6,7 +6,10 @@ from moto import mock_dynamodb2
 from handler import call
 
 BUCKET = "some-bucket"
-KEY = "incoming/transaction-0001.txt"
+OBJECT_NAME = "transaction-0001.txt"
+KEY = "incoming/" + OBJECT_NAME
+INCOMING_KEY = "incoming/"
+PROCESSED_KEY = "processed/"
 BODY = "Hello World!"
 TXNS_TABLE = "my-transactions-table"
 
@@ -23,12 +26,12 @@ def do_test_setup():
             yield
 
 def set_up_s3():
-    conn = boto3.resource('s3', region_name='us-east-1')
+    conn = boto3.resource('s3', region_name='eu-central-1')
     conn.create_bucket(Bucket=BUCKET)
-    boto3.client('s3', region_name='us-east-1').put_object(Bucket=BUCKET, Key=KEY, Body=BODY)
+    boto3.client('s3', region_name='eu-central-1').put_object(Bucket=BUCKET, Key=KEY, Body=BODY)
 
 def set_up_dynamodb():
-    client = boto3.client('dynamodb', region_name='us-east-1')
+    client = boto3.client('dynamodb', region_name='eu-central-1')
     client.create_table(
         AttributeDefinitions=[
             {
@@ -54,20 +57,20 @@ def set_up_dynamodb():
 def test_handler_moves_incoming_object_to_processed():
     with do_test_setup():
         # Run call with an event describing the file:
-        call(s3_object_created_event(BUCKET, KEY), None)
+        call(s3_object_created_event(BUCKET, INCOMING_KEY + OBJECT_NAME), None)
 
-        conn = boto3.resource('s3', region_name='us-east-1')
+        conn = boto3.resource('s3', region_name='eu-central-1')
 
         assert_object_doesnt_exist(conn, BUCKET, KEY)
         # Check that it exists in `processed/`
-        obj = conn.Object(BUCKET, "processed/transaction-0001.txt").get()
+        obj = conn.Object(BUCKET, PROCESSED_KEY + OBJECT_NAME).get()
         assert obj['Body'].read() == b'Hello World!'
 
 def test_handler_adds_record_in_dynamo_db_about_object():
     with do_test_setup():
         call(s3_object_created_event(BUCKET, KEY), None)
 
-        table = boto3.resource('dynamodb', region_name='us-east-1').Table(TXNS_TABLE)
+        table = boto3.resource('dynamodb', region_name='eu-central-1').Table(TXNS_TABLE)
         item = table.get_item(Key={'transaction_id': '0001'})['Item']
         assert item['body'] == 'Hello World!'
 
@@ -108,7 +111,7 @@ def s3_object_created_event(bucket_name, key):
             "x-amz-id-2": "EXAMPLE123/5678abcdefghijklambdaisawesome/mnopqrstuvwxyzABCDEFGH",
             "x-amz-request-id": "EXAMPLE123456789"
           },
-          "awsRegion": "us-east-1",
+          "awsRegion": "eu-central-1",
           "eventName": "ObjectCreated:Put",
           "userIdentity": {
             "principalId": "EXAMPLE"

@@ -1,5 +1,10 @@
 import boto3
 import re
+import logging
+
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 def read_file(s3_client, bucket, key):
     return s3_client.get_object(
@@ -22,7 +27,9 @@ def call(event, context):
     bucket = record['s3']['bucket']['name']
     key = record['s3']['object']['key']
 
-    table = boto3.resource('dynamodb', region_name='us-east-1').Table("my-transactions-table")
+    logger.info('>> got event{}'.format(event))
+
+    table = boto3.resource('dynamodb', region_name='eu-central-1').Table("my-transactions-table")
     txn_id = re.search("incoming\/transaction-(\d*).txt", key).group(1)
     table.put_item(
         Item={
