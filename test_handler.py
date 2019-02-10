@@ -7,6 +7,7 @@ from handler import call
 
 BUCKET = "some-bucket"
 OBJECT_NAME = "transaction-0001.txt"
+TARGET_OBJECT_NAME = "transaction-0001_processed.txt"
 KEY = "incoming/" + OBJECT_NAME
 INCOMING_KEY = "incoming/"
 PROCESSED_KEY = "processed/"
@@ -63,7 +64,7 @@ def test_handler_moves_incoming_object_to_processed():
 
         assert_object_doesnt_exist(conn, BUCKET, KEY)
         # Check that it exists in `processed/`
-        obj = conn.Object(BUCKET, PROCESSED_KEY + OBJECT_NAME).get()
+        obj = conn.Object(BUCKET, PROCESSED_KEY + TARGET_OBJECT_NAME).get()
         assert obj['Body'].read() == b'Hello World!'
 
 def test_handler_adds_record_in_dynamo_db_about_object():

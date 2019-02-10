@@ -1,6 +1,7 @@
 import boto3
 import re
 import logging
+import objectname
 
 
 logger = logging.getLogger()
@@ -14,9 +15,10 @@ def read_file(s3_client, bucket, key):
 
 def move_object_to_processed(s3_client, original_bucket, original_key):
     new_key = re.sub("incoming\/", "processed/", original_key)
+    target_key = objectname.get_target_obj_name(new_key)
     s3_client.copy_object(
         Bucket=original_bucket,
-        Key=new_key,
+        Key=target_key,
         CopySource={'Bucket': original_bucket, 'Key': original_key}
     )
     s3_client.delete_object(Bucket=original_bucket, Key=original_key)
