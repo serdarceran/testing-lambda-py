@@ -1,3 +1,4 @@
+
 # A sample serverless function to test testing lambda functions
 
 [![Build Status](https://travis-ci.org/joshuaballoch/testing-lambda-py.svg?branch=master)](https://travis-ci.org/joshuaballoch/testing-lambda-py)
@@ -24,3 +25,6 @@ pip-compile --output-file requirements-dev.txt requirements/requirements-dev.in
 
 pip install -r requirements-dev.txt
 ```
+
+4. Trace logs
+serverless logs -f activity --stage=dev --tail

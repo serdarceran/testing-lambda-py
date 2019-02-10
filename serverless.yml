@@ -23,6 +23,13 @@ functions:
           event: s3:ObjectCreated:*
           rules:
             - prefix: incoming/
+  activity:
+    handler: activity.call
+    timeout: 60
+    events:
+      - http:
+          path: activities
+          method: GET
 
 resources:
   Resources:
@@ -81,6 +88,7 @@ resources:
               Action:
                 - dynamodb:GetItem
                 - dynamodb:PutItem
+                - dynamodb:Scan
               Resource: arn:aws:dynamodb:*:*:table/my-transactions-table
         Roles:
           - Ref: IamRoleLambdaExecution
