@@ -9,7 +9,7 @@
 
 ```
 pip install virtualenv
-virtualenv .venv -p python3
+virtualenv .venv -p python3 OR virtualenv .venv -p python
 source .venv/bin/activate
 ```
 
