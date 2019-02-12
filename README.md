@@ -8,6 +8,7 @@
 1. Create & Source the virtualenv
 
 ```
+pip install virtualenv
 virtualenv .venv -p python3
 source .venv/bin/activate
 ```
@@ -26,5 +27,22 @@ pip-compile --output-file requirements-dev.txt requirements/requirements-dev.in
 pip install -r requirements-dev.txt
 ```
 
-4. Trace logs
+4. Run tests
+```
+pytest test*
+```
+
+5. Install serverless
+```
+npm install -g serverless
+```
+
+6. Deploy app
+```
+serverless deploy --stage=dev
+```
+
+7. Trace logs
+```
 serverless logs -f activity --stage=dev --tail
+```

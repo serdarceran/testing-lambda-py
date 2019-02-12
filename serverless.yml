@@ -25,7 +25,6 @@ functions:
             - prefix: incoming/
   activity:
     handler: activity.call
-    timeout: 60
     events:
       - http:
           path: activities
