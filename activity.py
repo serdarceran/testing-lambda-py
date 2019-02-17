@@ -15,11 +15,11 @@ def call(event, context):
 
     mydic = {}
     index = 0
+ 
 
-    for page in paginator.paginate(
-        TableName='my-transactions-table'):
-        mydic[page.Items.transaction_id.S] = page.Items.body.S
-        index += 1
+    for page in paginator.paginate(TableName='my-transactions-table'):
+        mydic[page["Items"][0]["transaction_id"]["S"]] = page["Items"][0]["body"]["S"]
+
 
     response = {
         "statusCode": 200,
